@@ -8,12 +8,12 @@ def get_config(name: str) -> dict:
     if not config:
         # HACK: context options panel has to be opened a first time to get
         # default context config. If not available, here is a default config.
-        _default_config = (
+        default_config = (
             '{"label": "", "type": "text", "order": 1, "comment": "", '
             '"menu_items": [], "autovalues": false, "menu_source": "", '
             '"minimum": 0.0, "maximum": 10.0, "min_locked": false, '
             '"max_locked": false}')
-        config = _default_config
+        config = default_config
     return json.loads(config)
 
 
