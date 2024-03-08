@@ -8,7 +8,7 @@ def preference(
         expect_boolean: bool = False) -> bool | None:
     """Get or set preference state
 
-    Keyword Arguments:
+    Keyword arguments:
         name -- preference name
         value -- value to set (default None)
         remove -- remove preference from houdini.prefs (default False)
