@@ -13,8 +13,11 @@ def add_parameter(
         name: str,
         label: str,
         subtype: str,
-        **kwargs) -> hou.ParmTemplate:
+        **kwargs) -> hou.Parm:
+    if subtype == 'string' and 'num_components' not in kwargs:
+        kwargs['num_components'] = 1
     group = node.parmTemplateGroup()
     parm = parm_constructors[subtype](name, label, **kwargs)
     group.append(parm)
     node.setParmTemplateGroup(group)
+    return node.parm(name)
