@@ -1,28 +1,35 @@
 import hou
-from typing import Optional, Union, List
+from typing import Union
 
 CategoryName = Union[str, hou.NodeTypeCategory]
 
 
-def get_categories(
-        name: Optional[CategoryName] = None) -> List[hou.NodeTypeCategory]:
-    if name is None:
-        categories = hou.nodeTypeCategories().values()
+def get_categories(*categories: CategoryName) -> list[hou.NodeTypeCategory]:
+    if not categories:
+        result = set(hou.nodeTypeCategories().values())
     else:
-        if isinstance(name, str):
-            categories = [hou.nodeTypeCategories()[name]]
-        else:
-            categories = [name]
-    return categories
+        result = set()
+        for category in categories:
+            if isinstance(category, str):
+                if item := hou.nodeTypeCategories().get(category):
+                    result.add(item)
+            else:
+                result.add(category)
+    return list(result)
 
 
 def get_nodes_from_type(
-        type_name: str,
-        category_name: Optional[CategoryName] = None) -> List[hou.Node]:
+        types: str | list[str],
+        categories: tuple[CategoryName] | str = ()) -> list[hou.Node]:
     nodes = []
-    for category in get_categories(category_name):
-        node_type = category.nodeType(type_name)
-        if node_type is None:
-            continue
-        nodes.extend(list(node_type.instances()))
+    if isinstance(categories, str):
+        categories = [categories]
+    for category in get_categories(*categories):
+        if isinstance(types, str):
+            types = [types]
+        for type_name in types:
+            node_type = category.nodeType(type_name)
+            if node_type is None:
+                continue
+            nodes.extend(list(node_type.instances()))
     return nodes
