@@ -5,7 +5,9 @@ from ..parameters import add_parameter
 def create_tree(
         items: list[str],
         network: hou.NetworkItem | str = '/stage',
-        start: hou.NetworkItem | str | None = None) -> list[hou.NetworkItem]:
+        start_item: hou.NetworkItem | str | None = None,
+        start_position: tuple[int, int] | None = None
+        ) -> list[hou.NetworkItem]:
     """
     Create tree network setup
 
@@ -25,18 +27,25 @@ def create_tree(
                    'value': 'value'}]
              }]
         network -- network where to create the tree
-        start -- network item where to start from
+        start_item -- network item where to start from
+        start_position -- x, y position to start from
     """
+    def set_positon(item, position):
+        x, y = position
+        if isinstance(item, hou.OpNetworkDot):  # Offset dot alignement
+            x += 0.5
+        item.setPosition((x, y - 1))
+
     if isinstance(network, str):
         network = hou.node(network)
     previous_item = None
-    if start is not None:
-        if isinstance(start, str):
-            previous_item = network.node(start)
+    if start_item is not None:
+        if isinstance(start_item, str):
+            previous_item = network.node(start_item)
         else:
-            previous_item = start
+            previous_item = start_item
     network_items = []
-    for data in items:
+    for item_index, data in enumerate(items):
         is_dot = data['type'] == 'dot'
         # Item creation
         if is_dot:
@@ -59,20 +68,23 @@ def create_tree(
                         subtype=new_parm['subtype'])
                     parm_item.set(new_parm['value'])
         network_items.append(item)
+        set_pos = None  # Item position
         if previous_item is not None:
-            # Item position
             x, y = previous_item.position()
             # Item connection
             if is_dot:
-                x += 0.5  # Offset dot alignement
                 item.setInput(previous_item)
             else:
                 if isinstance(previous_item, hou.OpNetworkDot):
-                    x -= 0.5  # Offset dot alignement
+                    x -= 0.5  # Compensate dot offset alignement
                 if index := data.get('input_index'):
                     item.setInput(index, previous_item)
                 else:
                     item.setFirstInput(previous_item)
-            item.setPosition((x, y - 1))
+            set_pos = (x, y)
+        if start_position is not None and item_index == 0:  # Match first item
+            set_pos = start_position
+        if set_pos is not None:
+            set_positon(item, set_pos)
         previous_item = item
     return network_items
