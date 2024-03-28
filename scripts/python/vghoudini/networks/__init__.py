@@ -45,7 +45,7 @@ def create_tree(
                 item.setName(dot_name)
         else:
             item = network.createNode(
-                node_type_name=data['type'], node_name=data['name'])
+                node_type_name=data['type'], node_name=data.get('name'))
             # Set parms
             if parms := data.get('parms'):
                 for parm, value in parms.items():
