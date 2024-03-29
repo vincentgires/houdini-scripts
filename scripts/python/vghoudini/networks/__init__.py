@@ -1,4 +1,5 @@
 import hou
+import loputils
 from ..parameters import add_parameter
 
 
@@ -24,7 +25,8 @@ def create_tree(
                   {'name': 'value',
                    'label': 'name',
                    'subtype': 'name',
-                   'value': 'value'}]
+                   'value': 'value'}],
+              'set_all_controls': 'value',  # Optional
              }]
         network -- network where to create the tree
         start_item -- network item where to start from
@@ -67,6 +69,8 @@ def create_tree(
                         label=new_parm['label'],
                         subtype=new_parm['subtype'])
                     parm_item.set(new_parm['value'])
+            if set_all_controls := data.get('set_all_controls'):
+                loputils.setAllControlParameters(item, set_all_controls)
         network_items.append(item)
         set_pos = None  # Item position
         if previous_item is not None:
