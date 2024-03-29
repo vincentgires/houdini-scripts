@@ -17,7 +17,7 @@ def create_tree(
               'name': 'dotidentifier'  # Optional
              },
              {'type': 'node_type',
-              'name': 'name',
+              'name': 'name',  # Optional
               'input_index': 0,  # Optional
               'parms': {'parm': 'value'}  # Optional
               'add_parms': [  # Optional
