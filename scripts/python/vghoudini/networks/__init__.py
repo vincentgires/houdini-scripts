@@ -19,6 +19,7 @@ def create_tree(
              },
              {'type': 'node_type',
               'name': 'name',  # Optional
+              'bypass: False,  # Optional
               'input_index': 0,  # Optional
               'parms': {'parm': 'value'}  # Optional
               'add_parms': [  # Optional
@@ -57,6 +58,9 @@ def create_tree(
         else:
             item = network.createNode(
                 node_type_name=data['type'], node_name=data.get('name'))
+            # Set bypass
+            if bypass := data.get('bypass'):
+                item.bypass(bypass)
             # Set parms
             if parms := data.get('parms'):
                 for parm, value in parms.items():
