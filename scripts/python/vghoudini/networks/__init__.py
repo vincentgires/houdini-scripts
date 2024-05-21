@@ -1,6 +1,33 @@
+from typing import Callable, Literal
 import hou
 import loputils
 from ..parameters import add_parameter
+
+
+node_creation_callbacks: dict[str, dict[str, list[Callable]]] = {
+    # {'network name': {'node type': {'create | delete': [callback callable]}}}
+}
+
+
+def _get_node_creation_callbacks(
+        node: hou.Node,
+        mode: Literal['create', 'deleted']) -> list[Callable]:
+    node_name = node.type().name()
+    network_name = node.network().type().name()
+    if network_callbacks := node_creation_callbacks.get(network_name):
+        if child_callbacks := network_callbacks.get(node_name):
+            return child_callbacks.get(mode) or []
+    return []
+
+
+def on_child_created(node: hou.LopNetwork, event_type, child_node):
+    for c in _get_node_creation_callbacks(node=child_node, mode='create'):
+        c(child_node)
+
+
+def on_child_deleted(node: hou.LopNetwork, event_type, child_node):
+    for c in _get_node_creation_callbacks(node=child_node, mode='delete'):
+        c(child_node)
 
 
 def create_tree(
