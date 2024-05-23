@@ -36,29 +36,28 @@ def create_tree(
         start_item: hou.NetworkItem | str | None = None,
         start_position: tuple[int, int] | None = None
         ) -> list[hou.NetworkItem]:
-    """
-    Create tree network setup
+    """Create tree network setup
 
-    Keyword arguments:
-        items -- list of nodes or dot. Example:
-            [{'type': 'dot',
-              'name': 'dotidentifier'  # Optional
-             },
-             {'type': 'node_type',
-              'name': 'name',  # Optional
-              'bypass: False,  # Optional
-              'input_index': 0,  # Optional
-              'parms': {'parm': 'value'}  # Optional
-              'add_parms': [  # Optional
-                  {'name': 'value',
-                   'label': 'name',
-                   'subtype': 'name',
-                   'value': 'value'}],
-              'set_all_controls': 'value',  # Optional
-             }]
-        network -- network where to create the tree
-        start_item -- network item where to start from
-        start_position -- x, y position to start from
+    Args:
+        items: list of nodes or dot. Example:
+          [{'type': 'dot',
+            'name': 'dotidentifier'  # Optional
+           },
+           {'type': 'node_type',
+            'name': 'name',  # Optional
+            'bypass: False,  # Optional
+            'input_index': 0,  # Optional
+            'parms': {'parm': 'value'}  # Optional
+            'add_parms': [  # Optional
+                {'name': 'value',
+                 'label': 'name',
+                 'subtype': 'name',
+                 'value': 'value'}],
+            'set_all_controls': 'value',  # Optional
+           }]
+        network: network where to create the tree
+        start_item: network item where to start from
+        start_position: x, y position to start from
     """
     def set_positon(item, position):
         x, y = position
